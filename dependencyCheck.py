@@ -18,8 +18,8 @@ except:
 subprocess.call('easy_install -U pip')
 subprocess.call('pip install numpy-1.11.2+mkl-cp35-cp35m-win_amd64.whl')
 subprocess.call('pip install matplotlib-1.5.3-cp35-cp35m-win_amd64.whl')
-subprocess.call('pip install scipy-0.18.1-cp35-cp35m-win_amd64.whl')
 subprocess.call('pip install pandas-0.19.1-cp35-cp35m-win_amd64.whl')
+subprocess.call('pip install scipy-0.18.1-cp35-cp35m-win_amd64.whl')
 setup(
     name="somocluGUI",
     description='somoclu GUI wrapper for the PERICLES project',
