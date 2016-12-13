@@ -131,8 +131,8 @@ def makeWindow () :
     bExit.pack(side=RIGHT,padx=10)
     return win
 
-k=0
-while k<1:
+k=True
+while k:
     win = makeWindow()
     center(win)
     win.mainloop()
