@@ -15,6 +15,8 @@
 import pandas as pd
 import somoclu, time, ntpath, os,sys, glob
 import numpy as np
+import sklearn.cluster as clusterAlgs
+from scipy.spatial import distance
 import matplotlib.pyplot as plt
 from matplotlib.pylab import interactive
 from tkinter import *
@@ -226,10 +228,14 @@ while k:
     lenUnPer = len(nodes)
     if lenUnPer*5< 50*30:
         n_columns, n_rows = 50,30
+        lablshift = .5 
     else:
         rat = int(np.ceil(np.sqrt(lenUnPer*5/1500)))
         n_columns, n_rows = 50*rat, 30*rat
-    lablshift = 1 
+        lablshift = .5*rat 
+    SOMdimensionsString = 'x'.join([str(x) for x in [n_columns,n_rows]])
+    print('Number of nodes is: %d' %lenUnPer)
+    print('SOM dimension is: %s' %SOMdimensionsString)
 
     som = somoclu.Somoclu(n_columns, n_rows, maptype=maptype, gridtype=gridtype, initialization=initialization)
 
@@ -241,7 +247,7 @@ while k:
         filename = tail or ntpath.basename(head)
         periodIdx = filename[filename.index('_')+1:-4]
 
-        df = pd.read_table(file, sep=theDelimeter, header=0,index_col=0)
+        df = pd.read_table(file, sep=str(theDelimeter), header=0,index_col=0)
         dfmax = df.max()
         dfmax[dfmax == 0] = 1
         df = df / dfmax
@@ -254,7 +260,27 @@ while k:
 
         som.train(epochs=epochs, radius0=radius0, scale0=scale0)
 
-        areas = [50]*len(som.bmus)
+        '''----------------------clustering params-----------'''
+        clusterAlgLabel = 'AffinityPropagation' # KMeans8 , SpectralClustering,AffinityPropagation, Birch 
+
+        if clusterAlgLabel == 'Birch':
+            algorithm = clusterAlgs.Birch()
+        elif clusterAlgLabel == 'AffinityPropagation':   
+            original_shape = som.codebook.shape
+            som.codebook.shape = (som._n_columns*som._n_rows, som.n_dim)
+            init = -np.max(distance.pdist(som.codebook, 'euclidean'))      
+            som.codebook.shape = original_shape        
+            algorithm = clusterAlgs.AffinityPropagation(preference = init,damping = 0.9)
+        elif clusterAlgLabel == 'KMeans8':
+            algorithm = None
+
+        print('Clustering algorithm employed: %s' %clusterAlgLabel)
+        som.cluster(algorithm=algorithm)
+        '''----------------------clustering params-----------'''
+        colors = []
+        for idm,bm in enumerate(som.bmus):
+            colors.append(som.clusters[bm[1], bm[0]])
+        areas = [70]*len(som.bmus)
 
         xDimension, yDimension = [], []
         for x in som.bmus:
@@ -264,14 +290,14 @@ while k:
         fig, ax = plt.subplots()
         colMap = 'Spectral_r'
         plt.imshow(som.umatrix,cmap = colMap, aspect = 'auto')
-        ax.scatter(xDimension,yDimension,s=areas)#
+        ax.scatter(xDimension,yDimension,s=areas,c=colors, cmap='RdYlBu')#
         doneLabs = set([''])
         for label, x, y in zip(nodes, xDimension, yDimension):
             lblshiftRatio = 1
             labFinshift = ''
             while labFinshift in doneLabs:
-                potentialPositions = [(x, y+lblshiftRatio*lablshift), (x, y-lblshiftRatio*lablshift),(x+lblshiftRatio*lablshift, y), (x-lblshiftRatio*lablshift, y),(x+lblshiftRatio*lablshift, y+lblshiftRatio*lablshift), 
-                (x-lblshiftRatio*lablshift, y+lblshiftRatio*lablshift), (x+lblshiftRatio*lablshift, y-lblshiftRatio*lablshift),(x-lblshiftRatio*lablshift, y-lblshiftRatio*lablshift)]
+                potentialPositions = [(x, y+lblshiftRatio*lablshift), (x, y-lblshiftRatio*lablshift),(x+lblshiftRatio*lablshift*2, y), (x-lblshiftRatio*lablshift*2, y),(x+lblshiftRatio*lablshift*2, y+lblshiftRatio*lablshift), 
+                (x-lblshiftRatio*lablshift*2, y+lblshiftRatio*lablshift), (x+lblshiftRatio*lablshift*2, y-lblshiftRatio*lablshift),(x-lblshiftRatio*lablshift*2, y-lblshiftRatio*lablshift)]
                 for pP in potentialPositions:
                     labFinshift = pP
                     if labFinshift not in doneLabs:
