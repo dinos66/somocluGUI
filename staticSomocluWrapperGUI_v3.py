@@ -55,7 +55,7 @@ def myexit():
     sys.exit()
 
 def makeWindow () :
-    global selectmaptype, selectgridtype, selectinitial, epochs, radius0, scale0 
+    global selectmaptype, selectgridtype, selectinitial, epochs, radius0, scale0 , radiusN, scaleN
     win = Tk()
     l = Label(win, text="SOMOCLU static ESOM creator",font=("Helvetica", 16))
     l.pack()
@@ -121,6 +121,20 @@ def makeWindow () :
     e3.grid(row=1, column=2,padx=5)
     scale0.set(0.1)
     e3.bind()
+
+    Label(frame6, text="radiusN").grid(row=2, column=1)
+    radiusN = IntVar()
+    e4 = Entry(frame6, textvariable=radiusN, width = 10)
+    e4.grid(row=3, column=1,padx=5)
+    radiusN.set(1)
+    e4.bind()
+    
+    Label(frame6, text="scaleN").grid(row=2, column=2)
+    scaleN = DoubleVar()
+    e5 = Entry(frame6, textvariable=scaleN, width = 10)
+    e5.grid(row=3, column=2,padx=5)
+    scaleN.set(0.01)
+    e5.bind()
     
     frameESOM = Frame(win)       # Row of buttons
     frameESOM.pack()
@@ -159,10 +173,16 @@ while k:
     print('Selected initialization is: %s' %initialization)
     epochs = epochs.get()
     print('Selected %d epochs' %epochs)
+    #----
     radius0 = radius0.get()
     print('Selected %d radius0' %radius0)
     scale0 = scale0.get()
     print('Selected %.2f scale0' %scale0)
+    #----
+    radiusN = radiusN.get()
+    print('Selected %d radiusN' %radiusN)
+    scaleN = scaleN.get()
+    print('Selected %.2f scaleN' %scaleN)
     print('**********************************')
 
     win.destroy()
@@ -208,7 +228,7 @@ while k:
     dfmax[dfmax == 0] = 1
     df = df / dfmax
     som.update_data(df.values)
-    som.train(epochs=epochs, radius0=radius0, scale0=scale0)
+    som.train(epochs=epochs, radius0=radius0, radiusN=radiusN, scale0=scale0, scaleN=scaleN)
 
     '''----------------------clustering params-----------'''
     clusterAlgLabel = 'AffinityPropagation' # KMeans8 , SpectralClustering,AffinityPropagation, Birch 
