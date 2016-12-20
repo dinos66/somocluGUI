@@ -20,6 +20,8 @@ from scipy.spatial import distance
 import matplotlib.pyplot as plt
 from matplotlib.pylab import interactive
 from tkinter import *
+from tkinter import filedialog
+from csv import Sniffer
 #-------------------------------------------------------------------------------
 # established paremeters:
 theDelimeter =  '\t'
@@ -63,19 +65,10 @@ def findDelimiter(filename):
     elif filename[-3:] == 'csv':
         delimeter = ','
     else:
-        win = Tk()
-        l = Label(win, text="Please choose delimeter")
-        l.pack()
-        delimeter = StringVar()
-        delimeter.set("L") # initialize
-        Radiobutton(win, text="comma",font=("Helvetica", 12), variable=delimeter, value=',').pack(anchor=W)
-        Radiobutton(win, text="tab",font=("Helvetica", 12), variable=delimeter, value='\t').pack(anchor=W) 
-        bExit = Button(win,text="Validate\nchoice", fg="red",command=win.quit)
-        bExit.pack(side=RIGHT,padx=10)
-        center(win)
-        win.mainloop()
-        delimeter = delimeter.get()
-        win.destroy()
+        sniffer = Sniffer()
+        with open(filename) as f:
+            next(f)
+            delimeter = sniffer.sniff(f.readline().strip()).delimiter
     return delimeter
 
 def makeWindow () :
@@ -242,9 +235,7 @@ while k:
     files = glob.glob(dataset_path+'/AdjMat'+years+lvl+'_*.txt')
     files.sort(key=lambda x: os.path.getmtime(x))    
 
-    # head, tail = ntpath.split(files[0])         
-    # filename = tail or ntpath.basename(head)
-    theDelimeter =  '\t'#findDelimiter(filename)
+    theDelimeter = findDelimiter(files[0])
 
     if lvl == 'lvl1':
      n_columns, n_rows = 20, 12

@@ -20,9 +20,8 @@ from scipy.spatial import distance
 import matplotlib.pyplot as plt
 from matplotlib.pylab import interactive
 from tkinter import *
-#-------------------------------------------------------------------------------
-# established paremeters:
-theDelimeter =  '\t'
+from tkinter import filedialog
+from csv import Sniffer
 #-------------------------------------------------------------------------------
 
 def askForDatasetPath():
@@ -56,6 +55,18 @@ def center(toplevel):
 def myexit():
     win.destroy()
     sys.exit()
+
+def findDelimiter(filename):
+    if filename[-3:] == 'tsv':
+        delimeter = '\t'
+    elif filename[-3:] == 'csv':
+        delimeter = ','
+    else:
+        sniffer = Sniffer()
+        with open(filename) as f:
+            next(f)
+            delimeter = sniffer.sniff(f.readline().strip()).delimiter
+    return delimeter
 
 def makeWindow () :
     global selectmaptype, selectgridtype, selectinitial, epochs, radius0, scale0, radiusN, scaleN
@@ -192,6 +203,8 @@ while k:
 
     head, tail = ntpath.split(dataset_path)         
     filename = tail or ntpath.basename(head)
+
+    theDelimeter = findDelimiter(dataset_path)
 
     df = pd.read_table(dataset_path, sep=str(theDelimeter), header=0,index_col=0)
     nodes = df.index.tolist()
