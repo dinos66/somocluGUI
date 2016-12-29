@@ -69,7 +69,7 @@ def findDelimiter(filename):
     return delimeter
 
 def makeWindow () :
-    global selectmaptype, selectgridtype, selectinitial, epochs, radius0, scale0, level, years, radiusN, scaleN
+    global selectmaptype, selectgridtype, selectinitial, epochs, radius0, scale0, radiusN, scaleN
     win = Tk()
     l = Label(win, text="SOMOCLU dynamic ESOM creator",font=("Helvetica", 16))
     l.pack()
@@ -78,26 +78,6 @@ def makeWindow () :
     frame1.pack()
     b1 = Button(frame1,text="Select matrix folder", command=askForDatasetPath).pack(side=LEFT,padx=10)
     b2 = Button(frame1,text="Select result folder", command=askForTargetPath).pack(side=RIGHT,padx=10)
-
-    frame2a = Frame(win)       # Row of buttons
-    frame2a.pack()
-    l2a = Label(frame2a, text="Please choose term level")
-    l2a.pack()
-    level = StringVar()
-    level.set("L") # initialize
-    Radiobutton(frame2a, text="1",font=("Helvetica", 12), variable=level, value='lvl1',anchor=S).pack(side= LEFT)
-    Radiobutton(frame2a, text="2",font=("Helvetica", 12), variable=level, value='lvl2',anchor=N).pack(side= LEFT) 
-    Radiobutton(frame2a, text="3",font=("Helvetica", 12), variable=level, value='lvl3',anchor=N).pack(side= LEFT) 
-    Radiobutton(frame2a, text="All",font=("Helvetica", 12), variable=level, value='lvlA',anchor=N).pack(side= LEFT) 
-
-    frame2b = Frame(win)       # Row of buttons
-    frame2b.pack()
-    l2a = Label(frame2b, text="Please choose Era")
-    l2a.pack()
-    years = StringVar()
-    years.set("L") # initialize
-    Radiobutton(frame2b, text="1800s",font=("Helvetica", 12), variable=years, value='1800s').pack(anchor=N)
-    Radiobutton(frame2b, text="2000s",font=("Helvetica", 12), variable=years, value='2000s').pack(anchor=N) 
 
     frame3 = Frame(win)       # select of names
     frame3.pack(pady=5)#side=LEFT,padx=10)
@@ -198,10 +178,6 @@ while k:
         askForTargetPath()
         pass
     print('Selected result folder is: %s' %target_path)
-    lvl = level.get()
-    print('Selected level of terms is: %s' %lvl)
-    years = years.get()
-    print('Selected level of terms is: %s' %years)
     print('**********************************')
     maptype = ['planar','toroid'][int(selectmaptype.curselection()[0])]
     print('Selected map type is: %s' %maptype)
@@ -229,7 +205,7 @@ while k:
     if not os.path.exists(target_path+'/dynamic__'+folderExtension):
         os.makedirs(target_path+'/dynamic__'+folderExtension)    
 
-    files = glob.glob(dataset_path+'/AdjMat'+years+lvl+'_*.txt')
+    files = glob.glob(dataset_path+'/*.txt')
     files.sort(key=lambda x: os.path.getmtime(x))    
 
     head, tail = ntpath.split(files[0])         
@@ -331,7 +307,7 @@ while k:
         mng.window.state('zoomed')
         interactive(True)
         plt.show()            
-        fig.savefig(target_path+'/dynamic__'+folderExtension+'/'+years+lvl+'_'+str(periodIdx)+'_'+timestamp+'.png',bbox_inches='tight')
+        fig.savefig(target_path+'/dynamic__'+folderExtension+'/esom_'+str(periodIdx)+'_'+timestamp+'.png',bbox_inches='tight')
         plt.close()
         interactive(False)
 
@@ -352,7 +328,7 @@ while k:
             invStrClustDict[periodIdx] = {','.join(v):k for k,v in strClustDict[periodIdx].items()}
             bmuNodes[periodIdx] = tmpSameBMUsNodes
             tmpsplits,tmpmerges = 0, 0
-            with open(target_path+'/dynamic__'+folderExtension+'/drifts/changes'+years+lvl+'_'+str(periodIdx)+'_'+timestamp+'.txt','w') as f:
+            with open(target_path+'/dynamic__'+folderExtension+'/drifts/changes_'+str(periodIdx)+'_'+timestamp+'.txt','w') as f:
                 for tsbn in tmpSameBMUsNodes:
                     if tsbn not in bmuNodes[str(int(periodIdx)-1)]:
                         oldbmucoords = []
