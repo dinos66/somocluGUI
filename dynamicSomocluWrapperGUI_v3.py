@@ -201,7 +201,7 @@ while k:
 
     win.destroy()
 
-    folderExtension = '_'.join([maptype,gridtype,initialization,str(epochs)+'epc',str(radius0)+'rad',str(scale0)+'scl'])
+    folderExtension = '_'.join([maptype,gridtype,initialization,str(epochs)+'epc_',str(radius0)+'rad0_',str(radiusN)+'radN_',str(scale0)+'scl0_',str(scaleN)+'sclN'])
     if not os.path.exists(target_path+'/dynamic__'+folderExtension):
         os.makedirs(target_path+'/dynamic__'+folderExtension)    
 
