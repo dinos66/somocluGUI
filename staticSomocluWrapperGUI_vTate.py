@@ -211,7 +211,7 @@ while k:
     lenUnPer = len(nodes)
     if 'lvl1' in filename:
         n_columns, n_rows = 20, 12
-        lablshift = .3
+        lablshift = .2
         areaSize = 100
     elif 'lvl2' in filename:
         n_columns, n_rows = 40, 24
@@ -269,10 +269,10 @@ while k:
         os.makedirs(target_path+'/static__'+folderExtension)
 
     fig, ax = plt.subplots()
+    plt.switch_backend('TkAgg')
     colMap = 'Spectral_r'
-    plt.title('ESOM of file %s. Size of map: %s' %(filename,SOMdimensionsString))
     plt.imshow(som.umatrix,cmap = colMap, aspect = 'auto')
-    ax.scatter(xDimension,yDimension,s=areas,c=colors, cmap='RdYlBu')#
+    plt.scatter(xDimension,yDimension,s=areas,c=colors, cmap='RdYlBu')#
     doneLabs = set([''])
     for label, x, y in zip(nodes, xDimension, yDimension):
         lblshiftRatio = 1
@@ -292,15 +292,15 @@ while k:
             finalLabel = label
         plt.annotate(finalLabel, xy = (x, y), xytext = labFinshift, textcoords = 'data', ha = 'center', va = 'center', fontsize = 10,bbox = dict(boxstyle = 'round,pad=0.1', fc = 'white', alpha = 0.4))#,arrowprops = dict(arrowstyle = '-', connectionstyle = 'arc3,rad=0'))
 
-    plt.xlim(0,n_columns-1)
-    plt.ylim(0,n_rows-1) 
+    plt.xlim(-0.5,n_columns-1)
+    plt.ylim(-0.5,n_rows-1) 
     plt.gca().invert_yaxis()
-    plt.xlabel('ESOM')
+    plt.xlabel('ESOM of file %s. Size of map: %s' %(filename,SOMdimensionsString))
     mng = plt.get_current_fig_manager()
     mng.window.state('zoomed')
     interactive(True)
     plt.show()   
     time.sleep(5)
-    fig.savefig(target_path+'/static__'+folderExtension+'/'+filename[:-4]+'_'+str(int(time.time()))+'.png',bbox_inches='tight')
+    plt.savefig(target_path+'/static__'+folderExtension+'/'+filename[:-4]+'_'+str(int(time.time()))+'.png',bbox_inches='tight')
     plt.close()
     interactive(False)

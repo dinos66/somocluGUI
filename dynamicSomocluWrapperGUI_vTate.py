@@ -235,24 +235,32 @@ while k:
     files = glob.glob(dataset_path+'/AdjMat'+years+lvl+'_*.txt')
     files.sort(key=lambda x: os.path.getmtime(x))    
 
-    theDelimeter = findDelimiter(files[0])
+    theDelimeter = findDelimiter(files[0])    
+
+    df = pd.read_table(files[0], sep=theDelimeter, header=0,index_col=0)
+    nodes = df.index.tolist()
+
+    lenUnPer = len(nodes)
 
     if lvl == 'lvl1':
-     n_columns, n_rows = 20, 12
-     lablshift = .3
-     areaSize = 100
+        n_columns, n_rows = 20, 12
+        lablshift = .3
+        areaSize = 100
     elif lvl == 'lvl2':
-     n_columns, n_rows = 40, 24
-     lablshift = .4
-     areaSize = 70
+        n_columns, n_rows = 40, 24
+        lablshift = .4
+        areaSize = 70
     elif lvl == 'lvl3':
-     n_columns, n_rows = 50, 30
-     lablshift = .5
-     areaSize = 50
+        n_columns, n_rows = 50, 30
+        lablshift = .5
+        areaSize = 50
     elif lvl == 'lvlA':
-     n_columns, n_rows = 60, 40
-     lablshift = .6 
-     areaSize = 50
+        n_columns, n_rows = 60, 40
+        lablshift = .6 
+        areaSize = 50
+    SOMdimensionsString = 'x'.join([str(x) for x in [n_columns,n_rows]])
+    print('Number of nodes is: %d' %lenUnPer)
+    print('SOM dimension is: %s' %SOMdimensionsString)
 
     som = somoclu.Somoclu(n_columns, n_rows, maptype=maptype, gridtype=gridtype, initialization=initialization)
 
@@ -305,9 +313,10 @@ while k:
             yDimension.append(x[1])
 
         fig, ax = plt.subplots()
+        plt.switch_backend('TkAgg')
         colMap = 'Spectral_r'
         plt.imshow(som.umatrix,cmap = colMap, aspect = 'auto')
-        ax.scatter(xDimension,yDimension,s=areas,c=colors, cmap='RdYlBu')#
+        plt.scatter(xDimension,yDimension,s=areas,c=colors, cmap='RdYlBu')#
         doneLabs = set([''])
         for label, x, y in zip(nodes, xDimension, yDimension):
             lblshiftRatio = 1
@@ -327,15 +336,15 @@ while k:
                 finalLabel = label
             plt.annotate(finalLabel, xy = (x, y), xytext = labFinshift, textcoords = 'data', ha = 'center', va = 'center', fontsize = 10,bbox = dict(boxstyle = 'round,pad=0.1', fc = 'white', alpha = 0.4))#,arrowprops = dict(arrowstyle = '-', connectionstyle = 'arc3,rad=0'))
 
-        plt.xlim(0,n_columns-1)
-        plt.ylim(0,n_rows-1)
+        plt.xlim(-0.5,n_columns-1)
+        plt.ylim(-0.5,n_rows-1)
         plt.gca().invert_yaxis()
-        plt.xlabel('ESOM')
+        plt.xlabel('ESOM of file %s. Size of map: %s' %(filename,SOMdimensionsString))
         mng = plt.get_current_fig_manager()
         mng.window.state('zoomed')
         interactive(True)
         plt.show()            
-        fig.savefig(target_path+'/dynamic__'+folderExtension+'/'+years+lvl+'_'+str(periodIdx)+'_'+timestamp+'.png',bbox_inches='tight')
+        plt.savefig(target_path+'/dynamic__'+folderExtension+'/'+years+lvl+'_'+str(periodIdx)+'_'+timestamp+'.png',bbox_inches='tight')
         plt.close()
         interactive(False)
 
