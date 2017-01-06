@@ -213,13 +213,13 @@ while k:
     df = pd.read_table(dataset_path, sep=str(theDelimeter), header=0,index_col=0)
     nodes = df.index.tolist()
     lenUnPer = len(nodes)
-    if lenUnPer*5< 50*30:
-        n_columns, n_rows = 50,30
-        lablshift = 0.5 
+    if lenUnPer*5< 5*3:
+        n_columns, n_rows = 5,3
+        lablshift = 0.05 
     else:
-        rat = int(np.ceil(np.sqrt(lenUnPer*5/1500)))
-        n_columns, n_rows = 50*rat, 30*rat
-        lablshift = 0.5*rat 
+        rat = int(np.ceil(np.sqrt(lenUnPer*5/15)))
+        n_columns, n_rows = 5*rat, 3*rat
+        lablshift = 0.05*rat 
     SOMdimensionsString = 'x'.join([str(x) for x in [n_columns,n_rows]])
     print('Number of nodes is: %d' %lenUnPer)
     print('SOM dimension is: %s' %SOMdimensionsString)
