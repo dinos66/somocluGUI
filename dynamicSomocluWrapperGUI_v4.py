@@ -202,7 +202,7 @@ while k:
             invStrClustDict[periodIdx] = {','.join(v):k for k,v in strClustDict[periodIdx].items()}
             bmuNodes[periodIdx] = tmpSameBMUsNodes
             tmpsplits,tmpmerges = 0, 0
-            with open(target_path+'/dynamic__'+folderExtension+'/drifts/changes_'+str(periodIdx)+'_'+timestamp+'.txt','w') as f:
+            with codecs.open(target_path+'/dynamic__'+folderExtension+'/drifts/changes_'+str(periodIdx)+'_'+timestamp+'.txt','w','utf8') as f:
                 for tsbn in tmpSameBMUsNodes:
                     if tsbn not in bmuNodes[str(int(periodIdx)-1)]:
                         oldbmucoords = []
