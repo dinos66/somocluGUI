@@ -76,7 +76,7 @@ while k:
     if not os.path.exists(target_path+'/dynamic__'+folderExtension):
         os.makedirs(target_path+'/dynamic__'+folderExtension)    
 
-    files = glob.glob(dataset_path+'/*.txt')
+    files = glob.glob(dataset_path+'/*.*')
     files.sort(key=lambda x: os.path.getmtime(x))    
 
     theDelimeter = guiMaker.findDelimiter(files[0])
