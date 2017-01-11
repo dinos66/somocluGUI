@@ -13,7 +13,7 @@
 # Licence:       <apache licence 2.0>
 #-------------------------------------------------------------------------------
 import pandas as pd
-import somoclu, time, ntpath, os,sys, glob
+import somoclu, time, ntpath, os,sys, glob, codecs
 import numpy as np
 import sklearn.cluster as clusterAlgs
 from scipy.spatial import distance
